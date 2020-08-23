@@ -13,16 +13,19 @@ import com.sun.net.httpserver.HttpServer;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        WebController webController = new WebController();
+
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/", new MyHandler());
         server.setExecutor(null); // creates a default executor
         server.start();
+
     }
 
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+            WebController webController = new WebController();
+
             String response = "Welcome!";
 
             HttpMethod httpMethod = t.getRequestMethod().equals("GET") ? HttpMethod.GET : HttpMethod.POST;
@@ -37,7 +40,7 @@ public class App {
                     if (webRoute.method().equals(httpMethod)) {
 
                         try {
-                            method.invoke();
+                            method.invoke(webController);
                         } catch (IllegalAccessException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
