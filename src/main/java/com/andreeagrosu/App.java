@@ -6,13 +6,22 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 public class App {
+
+    private static HashMap<String, Method> routeMap = new HashMap<String, Method>();
+
     public static void main(String[] args) throws Exception {
+
+        routeMap.put("/test1", WebController.class.getMethod("test1"));
+        routeMap.put("/test2", WebController.class.getMethod("test2"));
+        routeMap.put("/test3", WebController.class.getMethod("test3"));
+        routeMap.put("/test4", WebController.class.getMethod("test4"));
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
         server.createContext("/", new MyHandler());
@@ -24,6 +33,7 @@ public class App {
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+
             WebController webController = new WebController();
 
             String response = "Welcome!";
@@ -36,11 +46,12 @@ public class App {
                 if (method.isAnnotationPresent(WebRoute.class)) {
                     Annotation annotation = method.getAnnotation(WebRoute.class);
                     WebRoute webRoute = (WebRoute) annotation;
+                    Method routeMethod = routeMap.get(webRoute.path());
 
                     if (webRoute.method().equals(httpMethod)) {
 
                         try {
-                            method.invoke(webController);
+                            routeMethod.invoke(webController);
                         } catch (IllegalAccessException | InvocationTargetException e) {
                             e.printStackTrace();
                         }

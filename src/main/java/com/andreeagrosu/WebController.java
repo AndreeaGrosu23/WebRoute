@@ -15,14 +15,14 @@ public class WebController {
         return "test 2";
     }
 
-    @WebRoute(method = POST, path = "/test1")
-    public String test1Post() {
-        return "test 1 post";
+    @WebRoute(method = POST, path = "/test3")
+    public String test3() {
+        return "test 3";
     }
 
-    @WebRoute(method = POST, path = "/test2")
-    public String test2Post() {
-        return "test 2 post";
+    @WebRoute(method = POST, path = "/test4")
+    public String test4() {
+        return "test 4";
     }
 
 }
